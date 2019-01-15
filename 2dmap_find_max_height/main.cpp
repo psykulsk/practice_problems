@@ -75,8 +75,16 @@ void print_height_map(const unordered_map<Point, int> &map, int width, int heigh
 }
 
 int max_height(const vector<vector<int>> &map) {
-    unsigned int width = map.at(0).size();
-    unsigned int height = map.size();
+
+    // Empty map and overflow check
+    if (map.size() == 0 || map.at(0).size() == 0 || map.size() > std::numeric_limits<int>::max() ||
+        map.at(0).size() > std::numeric_limits<int>::max()) {
+        return -1;
+    }
+
+    int width = static_cast<int>(map.at(0).size());
+    int height = static_cast<int>(map.size());
+
     unordered_map<Point, int> max_height_map;
     std::queue<Point> to_process;
     int max_height = 0;
@@ -94,6 +102,11 @@ int max_height(const vector<vector<int>> &map) {
             }
         }
     }
+
+    //If the max_height_map is empty it means that there are only land tiles on the map,
+    // so the maximum height is infinite. In this case we just return -1
+    if (max_height_map.empty())
+        return -1;
 
     //  Process non 0 fields in breadth-first order (switch queue to stack and see that
     //  depth first can give wrong results in some cases)
